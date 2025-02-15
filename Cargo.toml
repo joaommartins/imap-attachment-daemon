@@ -1,0 +1,45 @@
+[package]
+name = "imap-attachment-daemon"
+version = "0.1.0"
+edition = "2021"
+description = "A Rust daemon to monitor an IMAP account, filter emails, and download attachments."
+license = "MIT"
+
+[dependencies]
+imap = "=3.0.0-alpha.15"          # For IMAP communication
+mail-parser = "0.10"
+log = "0.4.17"          # For logging
+env_logger = "0.11.6"   # For logging output
+serde = { version = "1.0", features = ["derive"] }            # For serialization
+envy = "0.4"
+thiserror = "2"     # For error handling
+dotenvy = "0.15"     # For loading environment variables from .env file
+secrecy = { version = "0.10", features = ["serde"] }  # For secret management
+anyhow = "1.0"      # For binary error handling
+
+[lints.rust]
+dead_code = "deny"
+# unused_imports = "deny"
+# unused_variables = "deny"
+# missing_docs = "deny"
+# missing_debug_implementations = "deny"
+# non_snake_case = "deny"
+# non_camel_case_types = "deny"
+# non_upper_case_globals = "deny"
+# trivial_casts = "deny"
+# trivial_numeric_casts = "deny"
+# unreachable_code = "deny"
+# unused_mut = "deny"
+# unused_qualifications = "deny"
+# unused_results = "deny"
+
+[lints.clippy]
+all = "deny"
+pedantic = "deny"
+# nursery = "deny"
+# cargo = "deny"
+complexity = "deny"
+correctness = "deny"
+perf = "deny"
+style = "deny"
+suspicious = "deny"

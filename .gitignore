@@ -1,0 +1,21 @@
+target/
+
+# IDE specific
+.idea/
+.vscode/
+.env
+.env.local
+
+# Editor temporary files
+*.~
+*.swp
+*.swo
+
+# Log files
+*.log
+*.log.*
+
+# Backup files
+*.bak
+
+.qodo/

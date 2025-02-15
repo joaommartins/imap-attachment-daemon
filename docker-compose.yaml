@@ -1,0 +1,8 @@
+services:
+  imap-attachment-daemon:
+    image: ghcr.io/joaommartins/imap-attachment-daemon:latest
+    env_file:
+      - .env
+    volumes:
+      - ./attachments:/attachments
+    restart: unless-stopped
