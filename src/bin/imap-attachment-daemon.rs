@@ -1,13 +1,13 @@
-use imap_attachment_daemon::{init_app, run_daemon};
-use std::process::ExitCode;
+//! The main entry point for the `imap-attachment-daemon` binary.
 
-fn main() -> anyhow::Result<ExitCode> {
+use imap_attachment_daemon::{init_app, run_daemon};
+
+fn main() -> anyhow::Result<()> {
     // Initialize the application
     let app_data = init_app()?;
 
     // Start the daemon
-    // Fetch and process emails
     run_daemon(&app_data)?;
 
-    Ok(ExitCode::SUCCESS)
+    Ok(())
 }

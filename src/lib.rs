@@ -1,3 +1,9 @@
+//! # Imap Attachment Daemon
+//!
+//! The Imap Attachment Daemon is a Rust application that listens for new emails on an IMAP server and processes
+//!  them based on the sender and recipient addresses. Attachments from whitelisted senders are saved to a specified
+//!  directory and the emails are moved to trash, while other emails are kept unread.
+
 mod errors;
 pub(crate) mod imap_ops;
 pub(crate) mod mail_parsing;
@@ -38,7 +44,11 @@ use env_logger::{Builder, Env};
 /// * If selecting the "INBOX" folder on the IMAP server fails.
 pub fn init_app() -> Result<AppConfig, ImapAttachmentDaemonError> {
     // Load environment variables from .env file
-    dotenvy::dotenv()?;
+    if dotenvy::dotenv().is_err() {
+        log::warn!("No .env file found, using environment variables");
+    } else {
+        log::info!("Loaded environment variables from .env file");
+    };
 
     // Initialize logging, default to info level
     let env = Env::new().filter_or("RUST_LOG", "info");
@@ -48,7 +58,12 @@ pub fn init_app() -> Result<AppConfig, ImapAttachmentDaemonError> {
     let config = envy::prefixed("CWA_").from_env::<AppConfig>()?;
 
     // Create attachments directory if it doesn't exist
-    std::fs::create_dir_all(&config.attachments_dir)?;
+    std::fs::create_dir_all(&config.attachments_dir)
+        // .map_err(|err| ImapAttachmentDaemonError::IoError(err, config.attachments_dir.clone()))?;
+        .map_err(|err| ImapAttachmentDaemonError::DirectoryCreationError {
+            source: err,
+            msg: config.attachments_dir.clone(),
+        })?;
 
     Ok(config)
 }
@@ -104,10 +119,10 @@ pub fn run_daemon(config: &AppConfig) -> Result<(), ImapAttachmentDaemonError> {
     }
 
     // Spawn a thread for IDLE mode
-    thread::spawn(move || -> Result<(), ImapAttachmentDaemonError> {
+    let _ = thread::spawn(move || -> Result<(), ImapAttachmentDaemonError> {
         loop {
             // Enter IDLE mode
-            idle_imap_session
+            let _ = idle_imap_session
                 .idle()
                 .timeout(Duration::from_secs(300))
                 .wait_while(|response| process_idle_update(response, &sender))?;

@@ -56,7 +56,7 @@ fn fetch_bodies_by_uid(
         .map(|arg0: u32| arg0.to_string())
         .collect::<Vec<String>>()
         .join(",");
-    imap_fetch_rfc822(query, imap_session).map_err(std::convert::Into::into)
+    imap_fetch_rfc822(query, imap_session).map_err(Into::into)
 }
 
 fn fetch_bodies_by_seq(
@@ -69,7 +69,7 @@ fn fetch_bodies_by_seq(
         .collect::<Vec<String>>()
         .join(",");
     let fetched_uids = imap_fetch_uids(&query, imap_session)?;
-    imap_fetch_rfc822(fetched_uids.join(","), imap_session).map_err(std::convert::Into::into)
+    imap_fetch_rfc822(fetched_uids.join(","), imap_session).map_err(Into::into)
 }
 
 fn fetch_headers(

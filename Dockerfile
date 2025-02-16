@@ -31,11 +31,14 @@ COPY --from=builder /usr/src/app/target/release/imap-attachment-daemon .
 # Make the binary executable
 RUN chmod +x imap-attachment-daemon
 
-# Copy the .env file
-COPY .env .env
-
 # Change ownership of the working directory to the non-root user
 RUN chown -R imapuser:imapuser /home/imapuser
+
+# Create a directory to store attachments, for default configuration
+RUN mkdir /attachments
+
+# Change ownership of the attachments directory to the non-root user
+RUN chown -R imapuser:imapuser /attachments
 
 # Switch to the non-root user
 USER imapuser

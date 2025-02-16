@@ -37,6 +37,10 @@ fn default_accepted_file_types() -> BTreeSet<String> {
     ])
 }
 
+fn default_attachments_dir() -> String {
+    "/attachments".to_string()
+}
+
 // Application configuration extracted from environment variables.
 #[derive(Deserialize, Debug, Clone, Default)]
 pub struct AppConfig {
@@ -46,6 +50,7 @@ pub struct AppConfig {
     pub target_address: Option<String>,
     #[serde(default)]
     pub whitelist: BTreeSet<String>,
+    #[serde(default = "default_attachments_dir")]
     pub attachments_dir: String,
     #[serde(default = "default_accepted_file_types")]
     pub accepted_file_types: BTreeSet<String>,

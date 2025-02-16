@@ -119,4 +119,4 @@ This project is licensed under the MIT License. See the [LICENSE](./LICENSE.md) 
 
 ## 📧 Contact
 
-For any inquiries, please [email me](mailto:contact%40jmartins.dev?subject=imap-attachment-daemon%20issue)
+For any inquiries, please [email me](mailto:contact%40jmartins.dev?subject=imap-attachment-daemon%20issue).

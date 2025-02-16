@@ -12,7 +12,7 @@ pub(crate) fn open_session(config: &AppConfig) -> Result<Session<Box<dyn ImapCon
         .connect()?
         .login(&config.username, config.password.expose_secret())
         .map_err(|e| e.0)?;
-    session.select("INBOX")?;
+    let _ = session.select("INBOX")?;
     Ok(session)
 }
 pub(crate) fn move_email_to_trash(
@@ -28,7 +28,7 @@ pub(crate) fn mark_email_as_unread(
     uid: &str,
     imap_session: &mut Session<Box<dyn ImapConnection>>,
 ) -> Result<(), ImapAttachmentDaemonError> {
-    imap_session.uid_store(uid, "-FLAGS \\Seen")?;
+    let _ = imap_session.uid_store(uid, "-FLAGS \\Seen")?;
     log::debug!("Email marked as unread");
     Ok(())
 }
@@ -67,7 +67,7 @@ pub(crate) fn imap_search(
     search_criteria: impl AsRef<str>,
     imap_session: &mut Session<Box<dyn ImapConnection>>,
 ) -> Result<HashSet<u32>, ImapAttachmentDaemonError> {
-    imap_session.search(search_criteria).map_err(std::convert::Into::into)
+    imap_session.search(search_criteria).map_err(Into::into)
 }
 
 pub(crate) fn imap_fetch_uids(
@@ -104,9 +104,7 @@ fn imap_fetch_by_seq(
     query: &impl AsRef<str>,
     imap_session: &mut Session<Box<dyn ImapConnection>>,
 ) -> Result<Fetches, ImapAttachmentDaemonError> {
-    imap_session
-        .fetch(sequence_set, query)
-        .map_err(std::convert::Into::into)
+    imap_session.fetch(sequence_set, query).map_err(Into::into)
 }
 
 fn imap_fetch_by_uid(
@@ -114,7 +112,5 @@ fn imap_fetch_by_uid(
     query: &impl AsRef<str>,
     imap_session: &mut Session<Box<dyn ImapConnection>>,
 ) -> Result<Fetches, ImapAttachmentDaemonError> {
-    imap_session
-        .uid_fetch(sequence_set, query)
-        .map_err(std::convert::Into::into)
+    imap_session.uid_fetch(sequence_set, query).map_err(Into::into)
 }
