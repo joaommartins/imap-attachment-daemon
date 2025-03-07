@@ -23,11 +23,11 @@ use models::AppConfig;
 use env_logger::{Builder, Env};
 
 /// Initialises the application by setting up environment variables, logging, configuration,
-/// attachments directory, database connection, and IMAP session.
+/// attachments directory, and IMAP session.
 ///
 /// # Returns
 ///
-/// * `Ok(AppData)` - Contains the application configuration, database connection, and IMAP session.
+/// * `Ok(AppConfig)` - Application configuration.
 /// * `Err(ImapAttachmentDaemonError)` - If any step in the initialisation process fails.
 ///
 /// # Errors
@@ -38,7 +38,6 @@ use env_logger::{Builder, Env};
 /// * If initialising the logging system fails.
 /// * If reading the configuration from environment variables fails.
 /// * If creating the attachments directory fails.
-/// * If initialising the database connection fails.
 /// * If connecting to the IMAP server fails.
 /// * If logging into the IMAP server fails.
 /// * If selecting the "INBOX" folder on the IMAP server fails.
@@ -53,17 +52,16 @@ pub fn init_app() -> Result<AppConfig, ImapAttachmentDaemonError> {
     // Initialize logging, default to info level
     let env = Env::new().filter_or("RUST_LOG", "info");
     Builder::from_env(env).init();
-    // env_logger::init();
 
     let config = envy::prefixed("CWA_").from_env::<AppConfig>()?;
 
     // Create attachments directory if it doesn't exist
-    std::fs::create_dir_all(&config.attachments_dir)
-        // .map_err(|err| ImapAttachmentDaemonError::IoError(err, config.attachments_dir.clone()))?;
-        .map_err(|err| ImapAttachmentDaemonError::DirectoryCreationError {
+    std::fs::create_dir_all(&config.attachments_dir).map_err(|err| {
+        ImapAttachmentDaemonError::DirectoryCreationError {
             source: err,
             msg: config.attachments_dir.clone(),
-        })?;
+        }
+    })?;
 
     Ok(config)
 }
